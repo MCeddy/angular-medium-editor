@@ -50,6 +50,10 @@ angular.module('angular-medium-editor', [])
             opts.placeholder = '';
           }
           ctrl.editor = new MediumEditor(iElement, opts);
+
+          if (scope.ngDisabled === true) {
+            ctrl.editor.deactivate();
+          }
         });
 
         var onChange = function() {
