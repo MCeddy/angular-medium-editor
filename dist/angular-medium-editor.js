@@ -14,7 +14,11 @@ angular.module('angular-medium-editor', [])
       link: function(scope, iElement, iAttrs, ctrl) {
         angular.element(iElement).addClass('angular-medium-editor');
 
-        scope.$watch('ngDisabled', function(newValue) {
+        scope.$watch('ngDisabled', function(newValue, oldValue) {
+          if (angular.equals(newValue, oldValue)) {
+            return;
+          }
+
           if (newValue === true) {
             ctrl.editor.deactivate();
           }
@@ -38,7 +42,11 @@ angular.module('angular-medium-editor', [])
         };
         prepOpts();
         placeholder = opts.placeholder;
-        scope.$watch('bindOptions', function() {
+        scope.$watch('bindOptions', function(newValue, oldValue) {
+          if (angular.equals(newValue, oldValue)) {
+            return;
+          }
+
           // in case options are provided after mediumEditor directive has been compiled and linked (and after $render function executed)
           // we need to re-initialize
           if (ctrl.editor) {
@@ -64,7 +72,7 @@ angular.module('angular-medium-editor', [])
             // lacks an API method to alter placeholder after initialization
             if (iElement.html() === '<p><br></p>' || iElement.html() === '') {
               opts.placeholder = placeholder;
-              var editor = new MediumEditor(iElement, opts);
+              ctrl.editor = new MediumEditor(iElement, opts);
 
               if (scope.ngDisabled === true) {
                 ctrl.editor.deactivate();
