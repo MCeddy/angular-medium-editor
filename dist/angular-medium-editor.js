@@ -12,6 +12,8 @@ angular.module('angular-medium-editor', [])
         ngDisabled: '='
       },
       link: function(scope, iElement, iAttrs, ctrl) {
+        var setFocusAfterEnabled = false;
+
         angular.element(iElement).addClass('angular-medium-editor');
 
         scope.$watch('ngDisabled', function(newValue, oldValue) {
@@ -24,6 +26,10 @@ angular.module('angular-medium-editor', [])
           }
           else {
             ctrl.editor.activate();
+
+            if (setFocusAfterEnabled) {
+              iElement.focus();
+            }
           }
         });
 
@@ -39,6 +45,13 @@ angular.module('angular-medium-editor', [])
             bindOpts = scope.bindOptions;
           }
           opts = angular.extend(opts, bindOpts);
+
+          if (opts.setFocusAfterEnabled) {
+            setFocusAfterEnabled = opts.setFocusAfterEnabled;
+
+            // remove property because it's not part of medium-editor
+            delete opts.setFocusAfterEnabled;
+          }
         };
         prepOpts();
         placeholder = opts.placeholder;
@@ -65,12 +78,17 @@ angular.module('angular-medium-editor', [])
         });
 
         var onChange = function() {
+          var htmlValue = iElement.html();
+
+          if (angular.equals(ctrl.$viewValue, htmlValue)) { // no changes
+            return;
+          }
 
           scope.$apply(function() {
 
             // If user cleared the whole text, we have to reset the editor because MediumEditor
             // lacks an API method to alter placeholder after initialization
-            if (iElement.html() === '<p><br></p>' || iElement.html() === '') {
+            if (htmlValue === '<p><br></p>' || htmlValue === '') {
               opts.placeholder = placeholder;
               ctrl.editor = new MediumEditor(iElement, opts);
 
@@ -79,7 +97,8 @@ angular.module('angular-medium-editor', [])
               }
             }
 
-            ctrl.$setViewValue(iElement.html());
+            // change model
+            ctrl.$setViewValue(htmlValue);
           });
         };
 
