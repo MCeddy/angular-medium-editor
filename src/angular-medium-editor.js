@@ -12,6 +12,8 @@ angular.module('angular-medium-editor', [])
         ngDisabled: '='
       },
       link: function(scope, iElement, iAttrs, ctrl) {
+        var setFocusAfterEnabled = false;
+
         angular.element(iElement).addClass('angular-medium-editor');
 
         scope.$watch('ngDisabled', function(newValue, oldValue) {
@@ -24,6 +26,10 @@ angular.module('angular-medium-editor', [])
           }
           else {
             ctrl.editor.activate();
+
+            if (setFocusAfterEnabled) {
+              iElement.focus();
+            }
           }
         });
 
@@ -39,6 +45,13 @@ angular.module('angular-medium-editor', [])
             bindOpts = scope.bindOptions;
           }
           opts = angular.extend(opts, bindOpts);
+
+          if (opts.setFocusAfterEnabled) {
+            setFocusAfterEnabled = opts.setFocusAfterEnabled;
+
+            // remove property because it's not part of medium-editor
+            delete opts.setFocusAfterEnabled;
+          }
         };
         prepOpts();
         placeholder = opts.placeholder;
