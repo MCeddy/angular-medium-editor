@@ -65,6 +65,10 @@ angular.module('angular-medium-editor', [])
             if (iElement.html() === '<p><br></p>' || iElement.html() === '') {
               opts.placeholder = placeholder;
               var editor = new MediumEditor(iElement, opts);
+
+              if (scope.ngDisabled === true) {
+                ctrl.editor.deactivate();
+              }
             }
 
             ctrl.$setViewValue(iElement.html());
@@ -85,6 +89,10 @@ angular.module('angular-medium-editor', [])
             }
 
             this.editor = new MediumEditor(iElement, opts);
+
+            if (scope.ngDisabled === true) {
+              ctrl.editor.deactivate();
+            }
           }
 
           iElement.html(ctrl.$isEmpty(ctrl.$viewValue) ? '' : ctrl.$viewValue);
