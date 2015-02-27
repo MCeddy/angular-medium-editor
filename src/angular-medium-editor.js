@@ -64,7 +64,7 @@ angular.module('angular-medium-editor', [])
             // lacks an API method to alter placeholder after initialization
             if (iElement.html() === '<p><br></p>' || iElement.html() === '') {
               opts.placeholder = placeholder;
-              var editor = new MediumEditor(iElement, opts);
+              ctrl.editor = new MediumEditor(iElement, opts);
             }
 
             ctrl.$setViewValue(iElement.html());
